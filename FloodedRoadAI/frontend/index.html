@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloodedRoadAI — Automatic Road Camera Screening</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- HEADER -->
+        <header class="navbar">
+            <div class="brand">
+                <div class="logo-box">
+                    <span class="logo-icon">🌊</span>
+                </div>
+                <div>
+                    <div class="brand-title-wrap">
+                        <h1>FloodedRoadAI</h1>
+                        <span class="badge-track">JIGNASA 2026 • Track B</span>
+                    </div>
+                    <p class="brand-subtitle">Automated Road Camera Screening • Computer Vision Disaster Response</p>
+                </div>
+            </div>
+
+            <div class="system-status" id="systemStatus">
+                <span class="pulse-indicator"></span>
+                <span id="statusText">AI MODEL ACTIVE (RESNET-18)</span>
+            </div>
+        </header>
+
+        <!-- SUBHEADER / DEMO IDENTIFIER BANNER -->
+        <section class="mission-banner">
+            <div class="mission-tag-row">
+                <span class="mission-tag">AUTOMATED FEED SCREENING</span>
+                <span class="demo-tag">HACKATHON DEMONSTRATION MODE</span>
+            </div>
+            <h2>Autonomous Camera Screening for Flooded &amp; Compromised Roadways</h2>
+            <p>
+                Continuously screens road camera frames for 6 critical access hazards without manual operator intervention.
+                Demonstrating automated threat detection, uncertainty disclosure, and rapid safety escalation.
+            </p>
+        </section>
+
+        <!-- MAIN WORKSPACE: 2-COLUMN DASHBOARD -->
+        <main class="dashboard-grid">
+
+            <!-- LEFT PANEL: ROAD CAMERA 01 -->
+            <section class="card panel-left">
+                <div class="panel-header">
+                    <div class="cam-badge">CAM 01</div>
+                    <div class="header-text">
+                        <div class="cam-title-row">
+                            <h3>Road Camera 01</h3>
+                            <span class="live-dot" id="liveDot">● SCREENING IDLE</span>
+                        </div>
+                        <p class="cam-subtitle">Sector A-4 Arterial Corridor • Stored Dataset Sequence</p>
+                    </div>
+                </div>
+
+                <!-- EXPLICIT PRERECORDED DEMO NOTICE -->
+                <div class="prerecorded-notice">
+                    <span class="notice-icon-svg">ℹ️</span>
+                    <div class="notice-msg">
+                        <strong>Recorded camera frames — prototype demonstration</strong>
+                        <span>Using stored dataset images to demonstrate automated camera screening (not live CCTV).</span>
+                    </div>
+                </div>
+
+                <!-- CAMERA VIEWPORT / FRAME DISPLAY -->
+                <div class="camera-viewport" id="cameraViewport">
+                    <!-- HUD OVERLAYS -->
+                    <div class="hud-top">
+                        <div class="hud-item hud-rec">
+                            <span class="hud-rec-dot" id="hudRecDot"></span>
+                            <span id="hudRecText">CAM-01 • PLAYBACK</span>
+                        </div>
+                        <div class="hud-item hud-time" id="hudTimestamp">10:14:02 AM</div>
+                    </div>
+
+                    <!-- CAMERA FRAME IMAGE -->
+                    <img id="cameraFrameImg" src="/api/sample-image/waterlogged_roads/img0601.jpg" alt="Road Camera Frame">
+
+                    <!-- SCANNING RADAR LINE (ACTIVE DURING SCREENING) -->
+                    <div class="scanner-line" id="scannerLine"></div>
+
+                    <!-- HUD BOTTOM -->
+                    <div class="hud-bottom">
+                        <div class="hud-item hud-frame-id" id="hudFrameCode">FRAME 01 / 12 (CAM01-FR01)</div>
+                        <div class="hud-item hud-hint" id="hudHint">Waterlogged Road</div>
+                    </div>
+                </div>
+
+                <!-- DEMO CONTROLS -->
+                <div class="demo-controls">
+                    <div class="primary-controls">
+                        <button type="button" class="btn-ctrl btn-start" id="btnStartDemo">
+                            <span class="btn-icon">▶</span>
+                            <span>Start Demo</span>
+                        </button>
+                        <button type="button" class="btn-ctrl btn-stop" id="btnStopDemo" disabled>
+                            <span class="btn-icon">⏸</span>
+                            <span>Stop Demo</span>
+                        </button>
+                    </div>
+
+                    <div class="nav-controls">
+                        <button type="button" class="btn-nav" id="btnPrevFrame" title="Previous Frame">◀ Prev</button>
+                        <span class="frame-counter-pill" id="frameCounterPill">1 / 12</span>
+                        <button type="button" class="btn-nav" id="btnNextFrame" title="Next Frame">Next ▶</button>
+                    </div>
+                </div>
+
+                <!-- FRAME PLAYLIST SELECTOR -->
+                <div class="frames-selector-section">
+                    <div class="selector-header">
+                        <span class="selector-title">Prerecorded Camera Frame Queue:</span>
+                        <span class="selector-hint">Click any frame to inspect</span>
+                    </div>
+                    <div class="frame-chips" id="frameChips">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: AI ASSESSMENT & ESCALATION -->
+            <section class="card panel-right">
+                <div class="panel-header">
+                    <div class="step-badge-ai">AI</div>
+                    <div class="header-text">
+                        <h3>Real-Time AI Assessment</h3>
+                        <p>ResNet-18 automated inference, confidence &amp; safety escalation</p>
+                    </div>
+                </div>
+
+                <!-- STATE A: EMPTY / IDLE -->
+                <div class="result-state state-empty" id="stateEmpty">
+                    <div class="empty-icon-circle">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                        </svg>
+                    </div>
+                    <h4>Camera Screening Ready</h4>
+                    <p>Click <strong>Start Demo</strong> on the left to begin automated screening of prerecorded road camera frames.</p>
+                    <div class="monitored-classes-summary">
+                        <strong>6 Monitored Hazards:</strong> Waterlogged Roads • Potholes • Open Manholes • Broken Edges • Cracks • Construction Zones
+                    </div>
+                </div>
+
+                <!-- STATE B: LOADING / INFERENCE -->
+                <div class="result-state state-loading" id="stateLoading" style="display: none;">
+                    <div class="loader-spinner"></div>
+                    <h4>Screening Incoming Camera Frame...</h4>
+                    <p>Running ResNet-18 feature extraction on Apple Silicon MPS</p>
+                </div>
+
+                <!-- STATE C: ACTIVE RESULT DISPLAY -->
+                <div class="result-state state-result" id="stateResult" style="display: none;">
+                    
+                    <!-- STATUS BANNER -->
+                    <div class="status-banner" id="statusBanner">
+                        <span class="status-icon" id="statusIcon">🚨</span>
+                        <div class="status-content">
+                            <span class="status-kicker" id="statusKicker">SAFETY ESCALATION</span>
+                            <h2 class="status-title" id="statusTitle">ATTENTION REQUIRED</h2>
+                        </div>
+                    </div>
+
+                    <!-- DETECTED HAZARD & ATTENTION LEVEL -->
+                    <div class="hazard-summary-box">
+                        <div class="hazard-title-row">
+                            <div>
+                                <span class="meta-label">IDENTIFIED CONDITION</span>
+                                <h3 class="hazard-name" id="hazardName">WATERLOGGED ROAD DETECTED</h3>
+                            </div>
+                            <div class="level-pill" id="levelPill">HIGH ATTENTION</div>
+                        </div>
+
+                        <!-- CONFIDENCE METER -->
+                        <div class="confidence-container">
+                            <div class="confidence-labels">
+                                <span class="conf-title">Model Confidence</span>
+                                <span class="conf-value" id="confValue">0.00%</span>
+                            </div>
+                            <div class="confidence-track">
+                                <div class="confidence-bar" id="confidenceBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ESCALATION & RECOMMENDATION CALLOUT -->
+                    <div class="recommendation-callout" id="recommendationCallout">
+                        <div class="callout-header">
+                            <span class="callout-badge">PROTOCOL GUIDANCE</span>
+                            <span class="callout-escalation" id="calloutEscalation">Potential road access issue detected.</span>
+                        </div>
+                        <p class="callout-body" id="calloutBody">
+                            Visible waterlogging may affect road access. Further field assessment recommended.
+                        </p>
+                    </div>
+
+                    <!-- PROBABILITIES BREAKDOWN -->
+                    <div class="breakdown-card">
+                        <div class="breakdown-header">
+                            <span class="meta-label">FULL HAZARD DISTRIBUTION (6 CLASSES)</span>
+                        </div>
+                        <div class="breakdown-list" id="breakdownList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- HONEST LOCALIZATION STATEMENT -->
+                    <div class="localization-statement">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span><strong>Localization Integrity:</strong> The IRDID dataset provides full-scene classification labels. No artificial bounding boxes are fabricated without ground-truth coordinates.</span>
+                    </div>
+
+                </div>
+
+            </section>
+        </main>
+
+        <!-- STRICT DISCLAIMER & PROTOCOL NOTICE -->
+        <footer class="app-disclaimer">
+            <div class="disclaimer-icon">⚠️</div>
+            <div class="disclaimer-text">
+                <strong>Safety &amp; Operational Boundaries:</strong>
+                This AI prototype screens prerecorded camera frames using visual surface patterns. It does <em>not</em> measure water depth, certify road structural safety, evaluate whether a specific vehicle can safely pass, identify exact geographic coordinates, or authorize emergency access clearance. Stored dataset frames are used for hackathon demonstration purposes only (not a live CCTV feed). Field verification is always required.
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
